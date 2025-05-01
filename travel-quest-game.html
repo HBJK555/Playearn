@@ -1,0 +1,397 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel Quest: Quiz Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #3b7a4b, #66a6ff);
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #fff;
+      font-size: 2.5rem;
+      font-family: 'Times New Roman', Times, serif;
+    }
+    .start-screen, .game-over-screen {
+      margin: 20px;
+    }
+    .quiz-box {
+      width: 300px;
+      height: 300px;
+      background-color: #fff;
+      border-radius: 12px;
+      margin: 20px auto;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .quiz-question {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+    .option-btn {
+      margin: 5px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .timer, .score-display {
+      font-size: 1.1rem;
+      margin-top: 10px;
+    }
+    .hidden {
+      display: none;
+    }
+    input[type="text"], input[type="email"] {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌍 Travel Quest: 100 Question Quiz</h1>
+
+  <div class="start-screen" id="startScreen">
+    <input type="text" id="playerName" placeholder="Enter your name" /><br>
+    <input type="email" id="playerEmail" placeholder="Enter your email" /><br>
+    <button onclick="startGame()">Start Game</button>
+  </div>
+
+  <div class="quiz-box hidden" id="quizBox">
+    <div class="quiz-question" id="questionText"></div>
+    <div id="options"></div>
+    <div class="timer" id="timerDisplay"></div>
+    <div class="score-display" id="scoreDisplay"></div>
+  </div>
+
+  <div class="game-over-screen hidden" id="gameOverScreen">
+    <h2>Game Over!</h2>
+    <p id="finalScore"></p>
+    <button onclick="restartGame()">Restart</button>
+  </div>
+
+  <script>
+  <!-- Inside <script> tag -->
+function startGame() {
+  const nameInput = document.getElementById("playerName");
+  const emailInput = document.getElementById("playerEmail");
+  const nameError = document.getElementById("nameError");
+  const emailError = document.getElementById("emailError");
+
+  let valid = true;
+
+  if (!nameInput.value.trim()) {
+    nameError.textContent = "Name is required.";
+    valid = false;
+  } else {
+    nameError.textContent = "";
+  }
+
+  // Make email optional – clear any previous error message
+  emailError.textContent = "";
+
+  if (!valid) return;
+
+  playerName = nameInput.value.trim();
+  playerEmail = emailInput.value.trim(); // Optional
+
+  startScreen.classList.add("hidden");
+  quizBox.classList.remove("hidden");
+  questions.sort(() => Math.random() - 0.5);
+  showQuestion();
+}
+
+function showQuestion() {
+  if (currentQuestionIndex >= questions.length) return endGame();
+  const q = questions[currentQuestionIndex];
+  questionText.textContent = q.question;
+  optionsContainer.innerHTML = "";
+  q.options.forEach(option => {
+    const btn = document.createElement("button");
+    btn.className = "option-btn";
+    btn.textContent = option;
+    btn.onclick = () => checkAnswer(option);
+    optionsContainer.appendChild(btn);
+  });
+
+  timeLeft = 10; // Increased from 5 to 10 seconds
+  timerDisplay.textContent = `⏱️ Time left: ${timeLeft}s`;
+  scoreDisplay.textContent = `Score: ${score}`;
+  clearInterval(timer);
+  timer = setInterval(() => {
+    timeLeft--;
+    timerDisplay.textContent = `⏱️ Time left: ${timeLeft}s`;
+    if (timeLeft === 0) {
+      clearInterval(timer);
+      endGame();
+    }
+  }, 1000);
+}
+
+function endGame() {
+  quizBox.classList.add("hidden");
+  gameOverScreen.classList.remove("hidden");
+  finalScore.textContent = `${playerName}, your final score is ${score}`;
+}
+
+  function showTerms() {
+    document.getElementById("termsModal").style.display = "block";
+  }
+  function closeTerms() {
+    document.getElementById("termsModal").style.display = "none";
+  }
+  
+  
+    const questions = [
+    { question: "Which continent is the Sahara Desert located in?", options: ["Asia", "Africa", "Australia", "Europe"], answer: "Africa" },
+  { question: "What is the largest country in the world by area?", options: ["USA", "Russia", "Canada", "China"], answer: "Russia" },
+  { question: "What is the capital city of Japan?", options: ["Beijing", "Tokyo", "Seoul", "Bangkok"], answer: "Tokyo" },
+  { question: "Which country is famous for the Eiffel Tower?", options: ["Italy", "France", "Spain", "Germany"], answer: "France" },
+  { question: "Which city is known as the Big Apple?", options: ["Los Angeles", "New York", "Chicago", "Boston"], answer: "New York" },
+  { question: "Which country is home to the Great Barrier Reef?", options: ["Australia", "New Zealand", "South Africa", "Canada"], answer: "Australia" },
+  { question: "What is the currency used in the United Kingdom?", options: ["Euro", "Pound Sterling", "Dollar", "Franc"], answer: "Pound Sterling" },
+  { question: "Which mountain is the highest in the world?", options: ["K2", "Mount Everest", "Kilimanjaro", "Mont Blanc"], answer: "Mount Everest" },
+  { question: "Which Italian city is famous for its canals?", options: ["Rome", "Venice", "Milan", "Florence"], answer: "Venice" },
+  { question: "Which country has the most islands?", options: ["Philippines", "Sweden", "Indonesia", "Norway"], answer: "Sweden" },
+  { question: "Which US state is known as the Sunshine State?", options: ["California", "Texas", "Florida", "Arizona"], answer: "Florida" },
+  { question: "Which city hosted the 2016 Summer Olympics?", options: ["Beijing", "Tokyo", "Rio de Janeiro", "London"], answer: "Rio de Janeiro" },
+  { question: "Which desert covers much of northern Africa?", options: ["Gobi", "Sahara", "Mojave", "Kalahari"], answer: "Sahara" },
+  { question: "Which city is home to the Colosseum?", options: ["Athens", "Rome", "Istanbul", "Madrid"], answer: "Rome" },
+  { question: "Which country is known for tulips and windmills?", options: ["Belgium", "Netherlands", "Germany", "Denmark"], answer: "Netherlands" },
+  { question: "What is the capital of Canada?", options: ["Toronto", "Vancouver", "Ottawa", "Montreal"], answer: "Ottawa" },
+  { question: "Which Asian country is known as the Land of Smiles?", options: ["Vietnam", "Thailand", "Japan", "Malaysia"], answer: "Thailand" },
+  { question: "Which river flows through London?", options: ["Thames", "Seine", "Danube", "Rhine"], answer: "Thames" },
+  { question: "Which country is home to Machu Picchu?", options: ["Mexico", "Peru", "Chile", "Colombia"], answer: "Peru" },
+  { question: "What is the official language of Brazil?", options: ["Spanish", "Portuguese", "English", "French"], answer: "Portuguese" },
+  { question: "Which city is known as the City of Light?", options: ["Berlin", "Paris", "Vienna", "Lisbon"], answer: "Paris" },
+  { question: "Which country has the most UNESCO World Heritage sites?", options: ["Italy", "China", "India", "Spain"], answer: "Italy" },
+  { question: "Which African country has pyramids?", options: ["Sudan", "Morocco", "Egypt", "Ethiopia"], answer: "Egypt" },
+  { question: "Which is the longest river in the world?", options: ["Nile", "Amazon", "Yangtze", "Mississippi"], answer: "Nile" },
+  { question: "What is the capital of Australia?", options: ["Sydney", "Melbourne", "Canberra", "Brisbane"], answer: "Canberra" },
+  { question: "Which island nation is southeast of India?", options: ["Sri Lanka", "Maldives", "Bangladesh", "Nepal"], answer: "Sri Lanka" },
+  { question: "Which European city has a famous wall?", options: ["Paris", "Berlin", "London", "Rome"], answer: "Berlin" },
+  { question: "Where is Mount Fuji located?", options: ["China", "Japan", "Korea", "Thailand"], answer: "Japan" },
+  { question: "Which US city is famous for its Golden Gate Bridge?", options: ["New York", "Los Angeles", "Seattle", "San Francisco"], answer: "San Francisco" },
+  { question: "Which country has the city of Dubrovnik?", options: ["Italy", "Greece", "Croatia", "Slovenia"], answer: "Croatia" },
+  { question: "Which country is known as the Land of the Rising Sun?", options: ["China", "Korea", "Japan", "Thailand"], answer: "Japan" },
+  { question: "Which continent has the most countries?", options: ["Europe", "Africa", "Asia", "South America"], answer: "Africa" },
+  { question: "Which city is famous for its cherry blossoms?", options: ["Beijing", "Kyoto", "Seoul", "Tokyo"], answer: "Tokyo" },
+  { question: "Which is the smallest country in the world?", options: ["Monaco", "San Marino", "Vatican City", "Liechtenstein"], answer: "Vatican City" },
+  { question: "Which country is famous for the Taj Mahal?", options: ["India", "Pakistan", "Bangladesh", "Nepal"], answer: "India" },
+  { question: "Where is the Dead Sea located?", options: ["Egypt", "Jordan", "Israel", "Both Israel and Jordan"], answer: "Both Israel and Jordan" },
+  { question: "Which city is home to the Christ the Redeemer statue?", options: ["Buenos Aires", "Rio de Janeiro", "Santiago", "Brasília"], answer: "Rio de Janeiro" },
+  { question: "Which European country is shaped like a boot?", options: ["Greece", "Spain", "Italy", "Portugal"], answer: "Italy" },
+  { question: "Which Asian country is made up of over 7,000 islands?", options: ["Indonesia", "Philippines", "Japan", "Malaysia"], answer: "Philippines" },
+  { question: "Which US national park is home to the Grand Canyon?", options: ["Yosemite", "Grand Canyon", "Yellowstone", "Zion"], answer: "Grand Canyon" },
+  { question: "What is the capital of Thailand?", options: ["Bangkok", "Hanoi", "Manila", "Kuala Lumpur"], answer: "Bangkok" },
+  { question: "Which Middle Eastern city is sacred to three religions?", options: ["Mecca", "Jerusalem", "Baghdad", "Damascus"], answer: "Jerusalem" },
+  { question: "Where is the Leaning Tower located?", options: ["Venice", "Florence", "Pisa", "Rome"], answer: "Pisa" },
+  { question: "What is the capital of Argentina?", options: ["Lima", "Santiago", "Buenos Aires", "Montevideo"], answer: "Buenos Aires" },
+  { question: "What is the main language spoken in Egypt?", options: ["Arabic", "French", "English", "Hebrew"], answer: "Arabic" },
+  { question: "Where is the Amazon Rainforest primarily located?", options: ["Colombia", "Brazil", "Peru", "Venezuela"], answer: "Brazil" },
+  { question: "Which city is famous for Oktoberfest?", options: ["Berlin", "Hamburg", "Munich", "Frankfurt"], answer: "Munich" },
+  { question: "What is the currency of Japan?", options: ["Yuan", "Won", "Yen", "Dollar"], answer: "Yen" },
+  { question: "Which continent is New Zealand located on?", options: ["Asia", "Australia", "Europe", "South America"], answer: "Australia" },
+  { question: "Which is the tallest building in the world?", options: ["Shanghai Tower", "Burj Khalifa", "Empire State", "Taipei 101"], answer: "Burj Khalifa" },
+  { question: "What is the capital of South Korea?", options: ["Busan", "Seoul", "Incheon", "Daejeon"], answer: "Seoul" },
+  { question: "What ocean is on the west coast of the United States?", options: ["Atlantic", "Indian", "Pacific", "Arctic"], answer: "Pacific" },
+  { question: "Where is the city of Casablanca?", options: ["Spain", "Morocco", "Portugal", "Algeria"], answer: "Morocco" },
+  { question: "Which city is famous for the Acropolis?", options: ["Rome", "Athens", "Istanbul", "Cairo"], answer: "Athens" },
+  { question: "Which country is known for its maple syrup?", options: ["USA", "Norway", "Canada", "Sweden"], answer: "Canada" },
+  { question: "Where is Transylvania located?", options: ["Hungary", "Romania", "Poland", "Slovakia"], answer: "Romania" },
+  { question: "Which country is known for its fjords?", options: ["Finland", "Sweden", "Norway", "Denmark"], answer: "Norway" },
+  { question: "Which city is home to the Space Needle?", options: ["San Diego", "San Francisco", "Seattle", "Portland"], answer: "Seattle" },
+  { question: "What is the capital of Spain?", options: ["Barcelona", "Madrid", "Seville", "Valencia"], answer: "Madrid" },
+  { question: "Which African country has Table Mountain?", options: ["Nigeria", "South Africa", "Kenya", "Tanzania"], answer: "South Africa" },
+  { question: "What is the capital of Germany?", options: ["Berlin", "Munich", "Hamburg", "Frankfurt"], answer: "Berlin" },
+  { question: "Which country is famous for the Northern Lights?", options: ["France", "Iceland", "Spain", "Portugal"], answer: "Iceland" },
+      { question: "What country is the Eiffel Tower located in?", options: ["Germany", "France", "Spain", "Italy"], answer: "France" },
+      { question: "Which city is known as the Big Apple?", options: ["Chicago", "New York City", "Los Angeles", "San Francisco"], answer: "New York City" },
+      { question: "Where is the Great Wall located?", options: ["India", "China", "Japan", "Korea"], answer: "China" },
+      { question: "Which country has the most islands?", options: ["Indonesia", "Philippines", "Sweden", "Canada"], answer: "Sweden" },
+      { question: "Where is Mount Fuji?", options: ["South Korea", "China", "Japan", "Thailand"], answer: "Japan" },
+      { question: "What is the capital of Australia?", options: ["Sydney", "Melbourne", "Canberra", "Perth"], answer: "Canberra" },
+      { question: "Which river runs through Egypt?", options: ["Amazon", "Danube", "Nile", "Yangtze"], answer: "Nile" },
+      { question: "Which US state is known for the Grand Canyon?", options: ["Nevada", "Utah", "Arizona", "Colorado"], answer: "Arizona" },
+      { question: "Which continent is the Sahara Desert located in?", options: ["Asia", "Africa", "Australia", "Europe"], answer: "Africa" },
+      { question: "What is the largest country in the world by area?", options: ["USA", "Russia", "Canada", "China"], answer: "Russia" },
+  { question: "Which sea separates Europe and Africa?", options: ["Red Sea", "Mediterranean Sea", "Black Sea", "Caspian Sea"], answer: "Mediterranean Sea" },
+  { question: "What is the capital of Egypt?", options: ["Cairo", "Alexandria", "Giza", "Luxor"], answer: "Cairo" },
+  { question: "Which city is famous for the opera house with a sail-like design?", options: ["Auckland", "Melbourne", "Sydney", "Perth"], answer: "Sydney" },
+  { question: "Where is the city of Petra located?", options: ["Jordan", "Israel", "Lebanon", "Iran"], answer: "Jordan" },
+  { question: "Which country is famous for its castles and the Loch Ness Monster?", options: ["Wales", "Scotland", "Ireland", "England"], answer: "Scotland" },
+  { question: "What is the capital of China?", options: ["Shanghai", "Beijing", "Guangzhou", "Chengdu"], answer: "Beijing" },
+  { question: "Which country is home to Mount Kilimanjaro?", options: ["Kenya", "Tanzania", "Uganda", "Rwanda"], answer: "Tanzania" },
+  { question: "Which city is known for the Statue of Liberty?", options: ["Los Angeles", "New York City", "Washington D.C.", "Chicago"], answer: "New York City" },
+  { question: "Where would you find the Blue Lagoon geothermal spa?", options: ["Norway", "Iceland", "Sweden", "Finland"], answer: "Iceland" },
+  { question: "What is the capital of Mexico?", options: ["Cancún", "Guadalajara", "Mexico City", "Tijuana"], answer: "Mexico City" },
+  { question: "Which country is known for the Great Wall?", options: ["Japan", "China", "India", "South Korea"], answer: "China" },
+  { question: "Which South American country is shaped like a long strip?", options: ["Argentina", "Peru", "Chile", "Ecuador"], answer: "Chile" },
+  { question: "Which city is the capital of Russia?", options: ["St. Petersburg", "Moscow", "Kazan", "Sochi"], answer: "Moscow" },
+  { question: "What is the name of the island shared by Haiti and the Dominican Republic?", options: ["Hispaniola", "Bermuda", "Jamaica", "Cuba"], answer: "Hispaniola" },
+  { question: "Which country is home to the city of Budapest?", options: ["Poland", "Hungary", "Austria", "Slovakia"], answer: "Hungary" },
+  { question: "Which country has the city of Nairobi?", options: ["Uganda", "Kenya", "Tanzania", "Ethiopia"], answer: "Kenya" },
+  { question: "What is the capital of Portugal?", options: ["Lisbon", "Porto", "Madrid", "Barcelona"], answer: "Lisbon" },
+  { question: "Which country is known for its ancient ruins of Angkor Wat?", options: ["Thailand", "Vietnam", "Cambodia", "Laos"], answer: "Cambodia" },
+  { question: "What is the capital of Malaysia?", options: ["Jakarta", "Kuala Lumpur", "Bangkok", "Manila"], answer: "Kuala Lumpur" },
+  { question: "Which US city is known for jazz music and Mardi Gras?", options: ["New Orleans", "Atlanta", "Houston", "Chicago"], answer: "New Orleans" },
+  { question: "Which country is home to the Alps mountain range?", options: ["France", "Austria", "Switzerland", "All of the above"], answer: "All of the above" },
+  { question: "What is the capital of Indonesia?", options: ["Jakarta", "Bali", "Surabaya", "Bandung"], answer: "Jakarta" },
+  { question: "Which city is famous for the Burj Al Arab hotel?", options: ["Dubai", "Doha", "Abu Dhabi", "Riyadh"], answer: "Dubai" },
+  { question: "Which country is famous for its red phone booths and double-decker buses?", options: ["USA", "Germany", "United Kingdom", "Australia"], answer: "United Kingdom" },
+  { question: "Which US national park is known for Old Faithful geyser?", options: ["Zion", "Yosemite", "Yellowstone", "Arches"], answer: "Yellowstone" },
+  { question: "What is the capital of Greece?", options: ["Athens", "Thessaloniki", "Santorini", "Heraklion"], answer: "Athens" },
+  { question: "Which city is home to the Louvre Museum?", options: ["London", "Paris", "Berlin", "Madrid"], answer: "Paris" },
+  { question: "What is the capital of Turkey?", options: ["Istanbul", "Ankara", "Izmir", "Antalya"], answer: "Ankara" },
+  { question: "Where is the Atacama Desert located?", options: ["Mexico", "Chile", "Argentina", "Bolivia"], answer: "Chile" },
+  { question: "Which city is famous for its gondolas?", options: ["Venice", "Florence", "Naples", "Rome"], answer: "Venice" }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timer;
+    let timeLeft = 5;
+    let playerName = "";
+    let playerEmail = "";
+
+    const quizBox = document.getElementById("quizBox");
+    const questionText = document.getElementById("questionText");
+    const optionsContainer = document.getElementById("options");
+    const timerDisplay = document.getElementById("timerDisplay");
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const gameOverScreen = document.getElementById("gameOverScreen");
+    const finalScore = document.getElementById("finalScore");
+    const startScreen = document.getElementById("startScreen");
+
+    function startGame() {
+      playerName = document.getElementById("playerName").value || "Player";
+      playerEmail = document.getElementById("playerEmail").value || "";
+      startScreen.classList.add("hidden");
+      quizBox.classList.remove("hidden");
+      questions.sort(() => Math.random() - 0.5); // Shuffle questions
+      showQuestion();
+    }
+
+    function showQuestion() {
+      if (currentQuestionIndex >= questions.length) return endGame();
+      const q = questions[currentQuestionIndex];
+      questionText.textContent = q.question;
+      optionsContainer.innerHTML = "";
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = option;
+        btn.onclick = () => checkAnswer(option);
+        optionsContainer.appendChild(btn);
+      });
+
+      timeLeft = 5;
+      timerDisplay.textContent = `⏱️ Time left: ${timeLeft}s`;
+      scoreDisplay.textContent = `Score: ${score}`;
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `⏱️ Time left: ${timeLeft}s`;
+        if (timeLeft === 0) {
+          clearInterval(timer);
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function checkAnswer(selected) {
+      clearInterval(timer);
+      const correct = questions[currentQuestionIndex].answer;
+      if (selected === correct) {
+        score++;
+        currentQuestionIndex++;
+        showQuestion();
+      } else {
+        endGame();
+      }
+    }
+
+    function endGame() {
+      quizBox.classList.add("hidden");
+      gameOverScreen.classList.remove("hidden");
+      finalScore.textContent = `${playerName} (${playerEmail}), your final score is ${score}`;
+    }
+
+    function restartGame() {
+      currentQuestionIndex = 0;
+      score = 0;
+      gameOverScreen.classList.add("hidden");
+      startScreen.classList.remove("hidden");
+    }
+    
+  </script>
+      <footer style="margin-top: 30px; color: #fff;">
+        <p>🔒 <a href="#" onclick="showTerms()" style="color: red; text-decoration: underline;">Disclaimer / Terms & Conditions</a></p>
+      </footer>
+    
+      <!-- Terms Modal -->
+      <div id="termsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; overflow:auto;">
+        <div style="background:#fff; color:#000; max-width:800px; margin:50px auto; padding:20px; border-radius:10px; position:relative;">
+          <button onclick="closeTerms()" style="position:absolute; top:10px; right:20px; font-size:18px; background:none; border:none; cursor:pointer;">❌</button>
+          <!-- Terms Content Starts -->
+          <h1>Terms & Conditions</h1>
+          <div class="section">
+            <h2>1. Friendly Disclaimer</h2>
+            <ul>
+              <li>This game is designed for entertainment and educational purposes.</li>
+              <li>By playing, you acknowledge that you are responsible for how you use the game and its content.</li>
+              <li>The game is provided “as-is,” and we cannot be held responsible for any issues, losses, or misunderstandings that may arise while playing.</li>
+            </ul>
+          </div>
+          <div class="section">
+            <h2>2. Your Responsibility</h2>
+            <ul>
+              <li>We trust you to enjoy the game responsibly and in accordance with the rules of your local laws.</li>
+              <li>Responsibility lies with the user, not the game creators.</li>
+            </ul>
+          </div>
+          <div class="section">
+            <h2>3. Your Privacy Matters</h2>
+            <ul>
+              <li>This game does not collect personal information unless you choose to share it.</li>
+              <li>Email, if collected, will only be used for updates or support.</li>
+            </ul>
+          </div>
+          <div class="section">
+            <h2>4. Security</h2>
+            <ul>
+              <li>We take reasonable precautions, but you should also stay safe online.</li>
+            </ul>
+          </div>
+          <div class="section">
+            <h2>5. About Email Collection</h2>
+            <ul>
+              <li>Emails are only used for updates or reminders.</li>
+              <li>We never share or sell emails.</li>
+            </ul>
+          </div>
+          <div class="section">
+            <h2>6. Agreement</h2>
+            <p>By continuing to play, you accept these terms.</p>
+          </div>
+          <p><strong>Last updated:</strong> May 1, 2025</p>
+          <!-- Terms Content Ends -->
+        </div>
+      </div>
+    
+    
+</body>
+</html>
